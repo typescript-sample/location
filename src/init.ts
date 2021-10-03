@@ -1,10 +1,11 @@
 import { HealthController, resources } from 'express-ext';
 import { Db } from 'mongodb';
 import { buildQuery, MongoChecker, PointMapper, SearchBuilder } from 'mongodb-extension';
-import { Bookable, BookableSM, Event, EventSM } from 'onecore';
+import { Bookable, BookableSM, Booking, Event, EventSM } from 'onecore';
 import { Location, LocationSM } from 'onecore';
 import { createValidator } from 'validator-x';
 import { BookableController, bookableModel, MongoBookableService } from './bookable';
+import { BookingController, bookingModel, BookingSM, MongoBookingService } from './booking';
 import { ApplicationContext } from './context';
 import { EventController, eventModel, MongoEventService } from './event';
 import { locationModel, MongoLocationService } from './location';
@@ -36,6 +37,10 @@ export function createContext(db: Db): ApplicationContext {
   const searchBookable = new SearchBuilder<Bookable, BookableSM>(db, 'bookable', build, bookableModel.attributes, bookableMapper.fromPoint);
   const bookableController = new BookableController(log, searchBookable.search, bookableService);
 
+  const bookingService = new MongoBookingService(db, 'booking');
+  const searchBooking = new SearchBuilder<Booking, BookingSM>(db, 'booking', build, bookingModel.attributes);
+  const bookingController = new BookingController(log, searchBooking.search, bookingService);
+
   const tourService = new MongoTourService(db, 'tour');
   const searchTour = new SearchBuilder<Tour, TourSM>(db, 'tour', build, tourModel.attributes);
   const tourController = new TourController(log, searchTour.search, tourService);
@@ -49,6 +54,8 @@ export function createContext(db: Db): ApplicationContext {
     location: locationController,
     event: eventController,
     bookable: bookableController,
-    tour: tourController, trip: tripController };
+    tour: tourController,
+    trip: tripController,
+    booking: bookingController };
   return ctx;
 }

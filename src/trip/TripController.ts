@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { LoadSearchController, SearchResult } from 'express-ext';
+import { GenericSearchController, SearchResult } from 'express-ext';
 import { Trip } from './Trip';
 import { TripService } from './TripService';
 import { TripSM } from './TripSM';
 
-export class TripController extends LoadSearchController<Trip, string, TripSM> {
+export class TripController extends GenericSearchController<Trip, string, TripSM> {
   constructor(log: (msg: string, ctx?: any) => void, find: (s: TripSM, limit?: number, skip?: number | string, fields?: string[]) => Promise<SearchResult<Trip>>, private tripService: TripService) {
     super(log, find, tripService);
     this.all = this.all.bind(this);

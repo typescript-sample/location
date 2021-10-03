@@ -1,14 +1,10 @@
 import { Model } from 'onecore';
 
-export const tripModel: Model = {
-  name: 'trips',
+export const bookingModel: Model = {
+  name: 'booking',
   attributes: {
     id: {
       key: true
-    },
-    userId: {
-      required: true,
-      match: 'equal'
     },
     name: {
       required: true,
@@ -31,8 +27,8 @@ export const tripModel: Model = {
     endTime: {
       type: 'datetime',
     },
-    locations: {
-      type: 'primitives'
+    locationId: {
+      match: 'equal'
     }
   }
 };

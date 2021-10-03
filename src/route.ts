@@ -28,4 +28,9 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/trips/search', ctx.trip.search);
   app.post('/trips/search', ctx.trip.search);
   app.get('/trips/:id', ctx.trip.load);
+
+  app.get('/bookings', ctx.booking.all);
+  app.get('/bookings/search', ctx.booking.search);
+  app.post('/bookings/search', ctx.booking.search);
+  app.get('/bookings/:id', ctx.booking.load);
 }

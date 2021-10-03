@@ -1,5 +1,6 @@
 import { HealthController } from 'express-ext';
 import { BookableController } from './bookable';
+import { BookingController } from './booking';
 import { EventController } from './event';
 import { LocationController } from './location';
 import { TourController } from './tour';
@@ -12,4 +13,5 @@ export interface ApplicationContext {
   bookable?: BookableController;
   tour?: TourController;
   trip?: TripController;
+  booking?: BookingController;
 }
