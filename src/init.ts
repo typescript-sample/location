@@ -55,7 +55,7 @@ export function createContext(db: Db): ApplicationContext {
     event: eventController,
     bookable: bookableController,
     tour: tourController,
-    trip: tripController,
+    // trip: tripController,
     booking: bookingController };
   return ctx;
 }
