@@ -1,7 +1,12 @@
-import { Model } from 'onecore';
+import { Bookable, Model } from 'onecore';
 
-export const tourModel: Model = {
-  name: 'tours',
+export interface BookableService {
+  all(): Promise<Bookable[]>;
+  load(id: string): Promise<Bookable>;
+}
+
+export const bookableModel: Model = {
+  name: 'bookable',
   attributes: {
     id: {
       key: true
@@ -21,11 +26,8 @@ export const tourModel: Model = {
       match: 'equal'
     },
     imageURL: {},
-    startTime: {
-      type: 'datetime',
-    },
-    endTime: {
-      type: 'datetime',
+    capacity: {
+      type: 'number',
     },
     locationId: {
       match: 'equal'

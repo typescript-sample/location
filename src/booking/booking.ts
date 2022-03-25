@@ -1,31 +1,25 @@
-import { Model } from 'onecore';
-import { DateRange } from 'onecore';
-import { SearchModel } from 'onecore';
+import { Booking, SearchModel, Model } from 'onecore';
 
-export interface TourService {
-    all(): Promise<Tour[]>;
-    load(id: string): Promise<Tour>;
-    getToursByDate?(date: Date): Promise<Tour[]>;
-    getToursByLocation?(locationId: string): Promise<Tour[]>;
-  }
-  
-export interface Tour {
+export interface BookingSM extends SearchModel {
+    bookingId?: string;
     id?: string;
+    userId?: string;
+    name?: string;
+    type?: string;
+    description?: string;
+    subject: string;
     startTime: Date;
     endTime: Date;
-    locations: string[] | Location[];
-    imageURL?: string;
+    status?: string;
 }
 
-export interface TourSM extends SearchModel {
-    id?: string;
-    startTime?: DateRange;
-    endTime?: DateRange;
-    locations?: string[];
+export interface BookingService {
+    all(): Promise<Booking[]>;
+    load(id: string): Promise<Booking>;
 }
 
-export const tourModel: Model = {
-    name: 'tours',
+export const bookingModel: Model = {
+    name: 'booking',
     attributes: {
         id: {
             key: true
@@ -56,3 +50,5 @@ export const tourModel: Model = {
         }
     }
 };
+
+

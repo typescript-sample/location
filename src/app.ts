@@ -1,11 +1,9 @@
-import { json } from 'body-parser';
+import { useContext } from './context';
 import dotenv from 'dotenv';
-  import express from 'express';
+import express, { json } from 'express';
 import http from 'http';
-import { connectToDb } from 'mongodb-extension';
-import { createContext } from './init';
-import { route } from './route';
-
+import {connectToDb} from 'mongodb-extension';
+import {route} from './route';
 dotenv.config();
 
 const app = express();
@@ -17,7 +15,7 @@ const mongoDB = process.env.MONGO_DB;
 app.use(json());
 
 connectToDb(`${mongoURI}`, `${mongoDB}`).then(db => {
-  const ctx = createContext(db);
+  const ctx = useContext(db);
   route(app, ctx);
   http.createServer(app).listen(port, () => {
     console.log('Start server at port ' + port);
