@@ -5,6 +5,8 @@ import { MongoLoader } from 'mongodb-extension';
 import { Bookable, BookableFilter, Log, Search } from 'onecore';
 import { bookableModel, BookableService } from './bookable';
 
+export * from './bookable';
+
 export class BookableController extends LoadSearchController<Bookable, string, BookableFilter> {
   constructor(log: Log, search: Search<Bookable, BookableFilter>, private bookableService: BookableService) {
     super(log, search, bookableService);

@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import { GenericSearchController, SearchResult } from 'express-ext';
+import { GenericSearchController } from 'express-ext';
 import { Db } from 'mongodb';
 import { MongoWriter } from 'mongodb-extension';
 import { Log, Search } from 'onecore';
-import { Trip, TripFilter, tripModel, TripService } from './Trip';
+import { Trip, TripFilter, tripModel, TripService } from './trip';
+
+export * from './trip';
 
 export class TripController extends GenericSearchController<Trip, string, TripFilter> {
   constructor(log: Log, find: Search<Trip, TripFilter>, private tripService: TripService) {

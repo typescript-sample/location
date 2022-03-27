@@ -5,6 +5,8 @@ import { MongoLoader } from 'mongodb-extension';
 import { Event, EventFilter, Log, Search } from 'onecore';
 import { eventModel, EventService } from './event';
 
+export * from './event';
+
 export class EventController extends LoadSearchController<Event, string, EventFilter> {
   constructor(log: Log, search: Search<Event, EventFilter>, private eventService: EventService) {
     super(log, search, eventService);

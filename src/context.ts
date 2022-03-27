@@ -3,18 +3,12 @@ import { Db } from 'mongodb';
 import { buildQuery, MongoChecker, PointMapper, SearchBuilder } from 'mongodb-extension';
 import { Bookable, BookableFilter, Booking, Event, EventFilter, Location, LocationFilter } from 'onecore';
 import { createValidator } from 'xvalidators';
-import { BookableController, MongoBookableService } from './bookable';
-import { bookableModel } from './bookable/bookable';
-import { BookingController, MongoBookingService } from './booking';
-import { BookingFilter, bookingModel } from './booking/booking';
-import { EventController, MongoEventService } from './event';
-import { eventModel } from './event/event';
-import { LocationController, MongoLocationService } from './location';
-import { locationModel } from './location/location';
-import { MongoTourService, TourController } from './tour';
-import { Tour, TourFilter, tourModel } from './tour/Tour';
-import { MongoTripService, TripController } from './trip';
-import { Trip, TripFilter, tripModel } from './trip/Trip';
+import { BookableController, bookableModel, MongoBookableService } from './bookable';
+import { BookingController, BookingFilter, bookingModel, MongoBookingService } from './booking';
+import { EventController, eventModel, MongoEventService } from './event';
+import { LocationController, locationModel, MongoLocationService } from './location';
+import { MongoTourService, Tour, TourController, TourFilter, tourModel } from './tour';
+import { MongoTripService, Trip, TripController, TripFilter, tripModel } from './trip';
 
 resources.createValidator = createValidator;
 export function log(msg: any): void {
@@ -61,5 +55,6 @@ export function useContext(db: Db): ApplicationContext {
   const bookingService = new MongoBookingService(db, 'booking');
   const searchBooking = new SearchBuilder<Booking, BookingFilter>(db, 'booking', build, bookingModel.attributes);
   const booking = new BookingController(log, searchBooking.search, bookingService);
+
   return { health, location, event, bookable, tour, trip, booking };
 }

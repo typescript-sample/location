@@ -1,6 +1,4 @@
-import { Model } from 'onecore';
-import { DateRange } from 'onecore';
-import { Filter } from 'onecore';
+import { DateRange, Filter, Model } from 'onecore';
 
 export interface TourService {
   all(): Promise<Tour[]>;

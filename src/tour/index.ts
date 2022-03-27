@@ -3,7 +3,9 @@ import { LoadSearchController } from 'express-ext';
 import { Db, FilterQuery } from 'mongodb';
 import { findAllWithMap, MongoLoader } from 'mongodb-extension';
 import { Location, Log, Search } from 'onecore';
-import { Tour, TourFilter, tourModel, TourService } from './Tour';
+import { Tour, TourFilter, tourModel, TourService } from './tour';
+
+export * from './tour';
 
 export class TourController extends LoadSearchController<Tour, string, TourFilter> {
   constructor(log: Log, search: Search<Tour, TourFilter>, private tourService: TourService) {

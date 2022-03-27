@@ -5,6 +5,7 @@ import { MongoLoader } from 'mongodb-extension';
 import { Booking, Log, Search } from 'onecore';
 import { BookingFilter, bookingModel, BookingService } from './booking';
 
+export * from './booking';
 
 export class BookingController extends LoadSearchController<Booking, string, BookingFilter> {
   constructor(log: Log, search: Search<Booking, BookingFilter>, private bookingService: BookingService) {

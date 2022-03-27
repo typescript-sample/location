@@ -5,6 +5,8 @@ import { MongoLoader } from 'mongodb-extension';
 import { Location, LocationFilter, Log, Search } from 'onecore';
 import { locationModel, LocationService } from './location';
 
+export * from './location';
+
 export class LocationController extends LoadSearchController<Location, string, LocationFilter> {
   constructor(log: Log, find: Search<Location, LocationFilter>, private locationService: LocationService) {
     super(log, find, locationService);
