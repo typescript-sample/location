@@ -1,11 +1,12 @@
-import { Db } from 'mongodb';
-import { MongoWriter } from 'mongodb-extension';
 import { Request, Response } from 'express';
 import { GenericSearchController, SearchResult } from 'express-ext';
-import { Trip, tripModel, TripService, TripSM } from './trip';
+import { Db } from 'mongodb';
+import { MongoWriter } from 'mongodb-extension';
+import { Log, Search } from 'onecore';
+import { Trip, TripFilter, tripModel, TripService } from './Trip';
 
-export class TripController extends GenericSearchController<Trip, string, TripSM> {
-  constructor(log: (msg: string, ctx?: any) => void, find: (s: TripSM, limit?: number, skip?: number | string, fields?: string[]) => Promise<SearchResult<Trip>>, private tripService: TripService) {
+export class TripController extends GenericSearchController<Trip, string, TripFilter> {
+  constructor(log: Log, find: Search<Trip, TripFilter>, private tripService: TripService) {
     super(log, find, tripService);
     this.all = this.all.bind(this);
   }

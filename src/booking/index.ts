@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { LoadSearchController, SearchResult } from 'express-ext';
-import { Booking } from 'onecore';
+import { LoadSearchController } from 'express-ext';
 import { Db } from 'mongodb';
 import { MongoLoader } from 'mongodb-extension';
-import { bookingModel, BookingService, BookingSM } from './booking';
+import { Booking, Log, Search } from 'onecore';
+import { BookingFilter, bookingModel, BookingService } from './booking';
 
 
-export class BookingController extends LoadSearchController<Booking, string, BookingSM> {
-  constructor(log: (msg: string, ctx?: any) => void, find: (s: BookingSM, limit?: number, skip?: number | string, fields?: string[]) => Promise<SearchResult<Booking>>, private bookingService: BookingService) {
-    super(log, find, bookingService);
+export class BookingController extends LoadSearchController<Booking, string, BookingFilter> {
+  constructor(log: Log, search: Search<Booking, BookingFilter>, private bookingService: BookingService) {
+    super(log, search, bookingService);
     this.all = this.all.bind(this);
   }
   all(req: Request, res: Response) {

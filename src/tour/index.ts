@@ -1,14 +1,13 @@
+import { Request, Response } from 'express';
+import { LoadSearchController } from 'express-ext';
 import { Db, FilterQuery } from 'mongodb';
 import { findAllWithMap, MongoLoader } from 'mongodb-extension';
-import { Location } from 'onecore';
+import { Location, Log, Search } from 'onecore';
+import { Tour, TourFilter, tourModel, TourService } from './Tour';
 
-import { Request, Response } from 'express';
-import { LoadSearchController, SearchResult } from 'express-ext';
-import { Tour, tourModel, TourService, TourSM } from './tour';
-
-export class TourController extends LoadSearchController<Tour, string, TourSM> {
-  constructor(log: (msg: string, ctx?: any) => void, find: (s: TourSM, limit?: number, skip?: number | string, fields?: string[]) => Promise<SearchResult<Tour>>, private tourService: TourService) {
-    super(log, find, tourService);
+export class TourController extends LoadSearchController<Tour, string, TourFilter> {
+  constructor(log: Log, search: Search<Tour, TourFilter>, private tourService: TourService) {
+    super(log, search, tourService);
     this.all = this.all.bind(this);
   }
   all(req: Request, res: Response) {
