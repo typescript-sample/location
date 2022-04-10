@@ -1,25 +1,23 @@
-import { Request, Response } from 'express';
-import { GenericSearchController } from 'express-ext';
 import { Db } from 'mongodb';
-import { MongoWriter } from 'mongodb-extension';
-import { Log, Search } from 'onecore';
-import { Trip, TripFilter, tripModel, TripService } from './trip';
-
+import { buildQuery, SearchBuilder } from 'mongodb-extension';
+import { Log, Manager, Search } from 'onecore';
+import { Trip, TripFilter, tripModel, TripRepository, TripService } from './trip';
+import { TripController } from './trip-controller';
 export * from './trip';
+export { TripController };
 
-export class TripController extends GenericSearchController<Trip, string, TripFilter> {
-  constructor(log: Log, find: Search<Trip, TripFilter>, private tripService: TripService) {
-    super(log, find, tripService);
-    this.all = this.all.bind(this);
-  }
-  all(req: Request, res: Response) {
-    this.tripService.all()
-      .then(trips => res.status(200).json(trips).end).catch(err => res.status(500).end(err));
+import { MongoTripRepository } from './mongo-trip-repository';
+
+export class TripManager extends Manager<Trip, string, TripFilter> implements TripService {
+  constructor(search: Search<Trip, TripFilter>, repository: TripRepository) {
+    super(search, repository);
   }
 }
-
-export class MongoTripService extends MongoWriter<Trip, string> {
-  constructor(protected db: Db, collectionName: string) {
-    super(db, collectionName, tripModel.attributes);
-  }
+export function useTripService(db: Db): TripService {
+  const builder = new SearchBuilder<Trip, TripFilter>(db, 'trip', buildQuery, tripModel);
+  const repository = new MongoTripRepository(db);
+  return new TripManager(builder.search, repository);
+}
+export function useTripController(log: Log, db: Db): TripController {
+  return new TripController(log, useTripService(db));
 }

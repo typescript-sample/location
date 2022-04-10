@@ -1,39 +1,21 @@
-import { Request, Response } from 'express';
-import { LoadSearchController } from 'express-ext';
-import { Db, FilterQuery } from 'mongodb';
-import { findAllWithMap, MongoLoader } from 'mongodb-extension';
-import { Location, Log, Search } from 'onecore';
-import { Tour, TourFilter, tourModel, TourService } from './tour';
-
+import { Db } from 'mongodb';
+import { buildQuery, SearchBuilder } from 'mongodb-extension';
+import { Log, ViewManager } from 'onecore';
+import { Tour, TourFilter, tourModel, TourRepository, TourService } from './tour';
+import { TourController } from './tour-controller';
 export * from './tour';
+export { TourController };
 
-export class TourController extends LoadSearchController<Tour, string, TourFilter> {
-  constructor(log: Log, search: Search<Tour, TourFilter>, private tourService: TourService) {
-    super(log, search, tourService);
-    this.all = this.all.bind(this);
-  }
-  all(req: Request, res: Response) {
-    this.tourService.all()
-      .then(tours => res.status(200).json(tours).end).catch(err => res.status(500).end(err));
+import { MongoTourRepository } from './mongo-tour-repository';
+
+export class TourManager extends ViewManager<Tour, string> implements TourService {
+  constructor(repository: TourRepository) {
+    super(repository);
   }
 }
 
-export class MongoTourService extends MongoLoader<Tour, string> {
-  constructor(protected db: Db, collectionName: string) {
-    super(db, collectionName, tourModel.attributes);
-  }
-  load(id: string): Promise<Tour> {
-    return super.load(id).then(tour => {
-      if (tour && tour.locations && tour.locations.length > 0) {
-        const locationIds: any = tour.locations;
-        const query: FilterQuery<any> = { _id: { $in: locationIds } };
-        return findAllWithMap<Location>(this.db.collection('location'), query, '_id').then(locations => {
-          tour.locations = locations as any;
-          return tour;
-        });
-      } else {
-        return tour;
-      }
-    });
-  }
+export function useTourController(log: Log, db: Db): TourController {
+  const builder = new SearchBuilder<Tour, TourFilter>(db, 'tour', buildQuery, tourModel);
+  const repository = new MongoTourRepository(db);
+  return new TourController(log, builder.search, repository);
 }

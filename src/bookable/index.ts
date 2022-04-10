@@ -1,25 +1,21 @@
-import { Request, Response } from 'express';
-import { LoadSearchController } from 'express-ext';
 import { Db } from 'mongodb';
-import { MongoLoader } from 'mongodb-extension';
-import { Bookable, BookableFilter, Log, Search } from 'onecore';
-import { bookableModel, BookableService } from './bookable';
-
+import { buildQuery, SearchBuilder } from 'mongodb-extension';
+import { Log, ViewManager } from 'onecore';
+import { Bookable, BookableFilter, bookableModel, BookableRepository, BookableService } from './bookable';
+import { BookableController } from './bookable-controller';
 export * from './bookable';
+export { BookableController };
 
-export class BookableController extends LoadSearchController<Bookable, string, BookableFilter> {
-  constructor(log: Log, search: Search<Bookable, BookableFilter>, private bookableService: BookableService) {
-    super(log, search, bookableService);
-    this.all = this.all.bind(this);
-  }
-  all(req: Request, res: Response) {
-    this.bookableService.all()
-      .then(bookables => res.status(200).json(bookables).end).catch(err => res.status(500).end(err));
+import { MongoBookableRepository } from './mongo-bookable-repository';
+
+export class BookableManager extends ViewManager<Bookable, string> implements BookableService {
+  constructor(repository: BookableRepository) {
+    super(repository);
   }
 }
 
-export class MongoBookableService extends MongoLoader<Bookable, string> {
-  constructor(protected db: Db, collectionName: string, fromPoint?: (v: Bookable) => Bookable) {
-    super(db, collectionName, bookableModel.attributes, fromPoint);
-  }
+export function useBookableController(log: Log, db: Db): BookableController {
+  const builder = new SearchBuilder<Bookable, BookableFilter>(db, 'bookable', buildQuery, bookableModel);
+  const repository = new MongoBookableRepository(db);
+  return new BookableController(log, builder.search, repository);
 }

@@ -1,52 +1,55 @@
-import { Location, Model } from 'onecore';
+import { Attributes, DateRange, Filter, ViewRepository, ViewService } from 'onecore';
 
-export interface LocationRate {
+export interface LocationFilter extends Filter {
   id?: string;
-  locationId: string;
-  userId: string;
-  rate: number;
-  rateTime?: Date;
-  review?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  dateOfBirth?: Date | DateRange;
 }
-
-export interface LocationService {
-  all(): Promise<Location[]>;
-  load(id: string): Promise<Location>;
-
+export interface Location {
+  id?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  dateOfBirth?: string;
+}
+export interface LocationRepository extends ViewRepository<Location, string> {
+}
+export interface LocationService extends ViewService<Location, string> {
+  /*
   getLocationsByTypeInRadius?(type: string, raidus: number): Promise<Location[]>;
   saveLocation?(userId: string, locationId: string): Promise<boolean>;
   removeLocation?(userId: string, locationId: string): Promise<boolean>;
   getLocationsOfUser?(userId: string): Promise<Location[]>;
 
   rateLocation?(objRate: LocationRate): Promise<boolean>;
+  */
 }
 
-export const locationModel: Model = {
-  name: 'location',
-  attributes: {
-    id: {
-      key: true
-    },
-    name: {
-      required: true,
-      q: true
-    },
-    type: {
-      match: 'equal',
-      required: true
-    },
-    description: {
-      q: true
-    },
-    status: {
-      match: 'equal'
-    },
-    imageURL: {},
-    latitude: {
-      type: 'number',
-    },
-    longitude: {
-      type: 'number',
-    }
+export const locationModel: Attributes = {
+  id: {
+    key: true
+  },
+  name: {
+    required: true,
+    q: true
+  },
+  type: {
+    match: 'equal',
+    required: true
+  },
+  description: {
+    q: true
+  },
+  status: {
+    match: 'equal'
+  },
+  imageURL: {},
+  latitude: {
+    type: 'number',
+  },
+  longitude: {
+    type: 'number',
   }
 };

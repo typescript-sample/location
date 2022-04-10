@@ -1,25 +1,22 @@
-import { Request, Response } from 'express';
-import { LoadSearchController } from 'express-ext';
 import { Db } from 'mongodb';
-import { MongoLoader } from 'mongodb-extension';
-import { Location, LocationFilter, Log, Search } from 'onecore';
-import { locationModel, LocationService } from './location';
-
+import { buildQuery, PointMapper, SearchBuilder } from 'mongodb-extension';
+import { Log, ViewManager } from 'onecore';
+import { Location, LocationFilter, locationModel, LocationRepository, LocationService } from './location';
+import { LocationController } from './location-controller';
 export * from './location';
+export { LocationController };
 
-export class LocationController extends LoadSearchController<Location, string, LocationFilter> {
-  constructor(log: Log, find: Search<Location, LocationFilter>, private locationService: LocationService) {
-    super(log, find, locationService);
-    this.all = this.all.bind(this);
-    this.load = this.load.bind(this);
-  }
-  all(req: Request, res: Response) {
-    this.locationService.all()
-      .then(locations => res.status(200).json(locations).end).catch(err => res.status(500).end(err));
+import { MongoLocationRepository } from './mongo-location-repository';
+
+export class LocationManager extends ViewManager<Location, string> implements LocationService {
+  constructor(repository: LocationRepository) {
+    super(repository);
   }
 }
-export class MongoLocationService extends MongoLoader<Location, string> {
-  constructor(protected db: Db, collectionName: string, fromPoint?: (v: Location) => Location) {
-    super(db, collectionName, locationModel.attributes, fromPoint);
-  }
+
+export function useLocationController(log: Log, db: Db): LocationController {
+  const mapper = new PointMapper<Location>('geo', 'latitude', 'longitude');
+  const builder = new SearchBuilder<Location, LocationFilter>(db, 'location', buildQuery, locationModel, mapper.fromPoint);
+  const repository = new MongoLocationRepository(db, mapper.fromPoint);
+  return new LocationController(log, builder.search, repository);
 }

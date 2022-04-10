@@ -1,25 +1,22 @@
-import { Request, Response } from 'express';
-import { LoadSearchController } from 'express-ext';
 import { Db } from 'mongodb';
-import { MongoLoader } from 'mongodb-extension';
-import { Event, EventFilter, Log, Search } from 'onecore';
-import { eventModel, EventService } from './event';
-
+import { buildQuery, PointMapper, SearchBuilder } from 'mongodb-extension';
+import { Log, ViewManager } from 'onecore';
+import { Event, EventFilter, eventModel, EventRepository, EventService } from './event';
+import { EventController } from './event-controller';
 export * from './event';
+export { EventController };
 
-export class EventController extends LoadSearchController<Event, string, EventFilter> {
-  constructor(log: Log, search: Search<Event, EventFilter>, private eventService: EventService) {
-    super(log, search, eventService);
-    this.all = this.all.bind(this);
-  }
-  all(req: Request, res: Response) {
-    this.eventService.all()
-      .then(events => res.status(200).json(events).end).catch(err => res.status(500).end(err));
+import { MongoEventRepository } from './mongo-event-repository';
+
+export class EventManager extends ViewManager<Event, string> implements EventService {
+  constructor(repository: EventRepository) {
+    super(repository);
   }
 }
 
-export class MongoEventService extends MongoLoader<Event, string> {
-  constructor(protected db: Db, collectionName: string, fromPoint?: (v: Event) => Event) {
-    super(db, collectionName, eventModel.attributes, fromPoint);
-  }
+export function useEventController(log: Log, db: Db): EventController {
+  const mapper = new PointMapper<Event>('geo', 'latitude', 'longitude');
+  const builder = new SearchBuilder<Event, EventFilter>(db, 'event', buildQuery, eventModel, mapper.fromPoint);
+  const repository = new MongoEventRepository(db, mapper.fromPoint);
+  return new EventController(log, builder.search, repository);
 }

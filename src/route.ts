@@ -3,34 +3,42 @@ import { ApplicationContext } from './context';
 
 export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/health', ctx.health.check);
+  app.patch('/log', ctx.log.config);
+  app.patch('/middleware', ctx.middleware.config);
 
-  app.get('/locations', ctx.location.all);
-  app.get('/locations/search', ctx.location.search);
-  app.post('/locations/search', ctx.location.search);
-  app.get('/locations/:id', ctx.location.load);
+  app.post('/articles/search', ctx.article.search);
+  app.get('/articles/search', ctx.article.search);
+  app.get('/articles/:id', ctx.article.load);
 
-  app.get('/events', ctx.event.all);
-  app.get('/events/search', ctx.event.search);
-  app.post('/events/search', ctx.event.search);
-  app.get('/events/:id', ctx.event.load);
-
-  app.get('/bookables', ctx.bookable.all);
-  app.get('/bookables/search', ctx.bookable.search);
   app.post('/bookables/search', ctx.bookable.search);
+  app.get('/bookables/search', ctx.bookable.search);
   app.get('/bookables/:id', ctx.bookable.load);
 
-  app.get('/tours', ctx.tour.all);
-  app.get('/tours/search', ctx.tour.search);
+  app.post('/bookings/search', ctx.booking.search);
+  app.get('/bookings/search', ctx.booking.search);
+  app.get('/bookings/:id', ctx.booking.load);
+  app.post('/bookings', ctx.booking.create);
+  app.put('/bookings/:id', ctx.booking.update);
+  app.patch('/bookings/:id', ctx.booking.patch);
+  app.delete('/bookings/:id', ctx.booking.delete);
+
+  app.post('/events/search', ctx.event.search);
+  app.get('/events/search', ctx.event.search);
+  app.get('/events/:id', ctx.event.load);
+
+  app.post('/locations/search', ctx.location.search);
+  app.get('/locations/search', ctx.location.search);
+  app.get('/locations/:id', ctx.location.load);
+
   app.post('/tours/search', ctx.tour.search);
+  app.get('/tours/search', ctx.tour.search);
   app.get('/tours/:id', ctx.tour.load);
 
-  app.get('/trips', ctx.trip.all);
-  app.get('/trips/search', ctx.trip.search);
   app.post('/trips/search', ctx.trip.search);
+  app.get('/trips/search', ctx.trip.search);
   app.get('/trips/:id', ctx.trip.load);
-
-  app.get('/bookings', ctx.booking.all);
-  app.get('/bookings/search', ctx.booking.search);
-  app.post('/bookings/search', ctx.booking.search);
-  app.get('/bookings/:id', ctx.booking.load);
+  app.post('/trips', ctx.trip.create);
+  app.put('/trips/:id', ctx.trip.update);
+  app.patch('/trips/:id', ctx.trip.patch);
+  app.delete('/trips/:id', ctx.trip.delete);
 }
