@@ -1,35 +1,26 @@
-import {
-  Attributes,
-  DateRange,
-  Filter,
-  Repository,
-  Service,
-  ViewRepository,
-  ViewService,
-} from 'onecore';
+import { Attributes, Filter, Repository, ViewRepository, ViewService } from 'onecore';
 
 export interface LocationFilter extends Filter {
   id?: string;
-  username?: string;
-  email?: string;
-  phone?: string;
-  dateOfBirth?: Date | DateRange;
+  name?: string;
+  type?: string;
+  status?: string[]|string;
+  latitude?: number;
+  longitude?: number;
+  radius?: number;
 }
 
-export interface RateFilter extends Filter {
-  id?: string;
-  locationId?: string;
-  userId?: string;
-  rate?: number;
-  rateTime?: Date | DateRange;
-  review?: string;
-}
 export interface Location {
   id?: string;
-  username?: string;
-  email?: string;
-  phone?: string;
-  dateOfBirth?: string;
+  name?: string;
+  type?: string;
+  description?: string;
+  status?: string;
+  imageURL?: string;
+  latitude?: number;
+  longitude?: number;
+  customURL?: string;
+  info?: LocationInfo;
 }
 export interface LocationInfo {
   id: string;
@@ -52,27 +43,21 @@ export interface Rate {
 
 export interface LocationRepository extends ViewRepository<Location, string> {
 }
-
 export interface RateRepository extends Repository<Rate, string> {
+  save(rate: Rate): Promise<number>;
+}
+export interface LocationInfoRepository extends Repository<LocationInfo, string> {
+  save(info: LocationInfo): Promise<number>;
 }
 
-export interface LocationInfoRepository extends Repository<LocationInfo, string> {
-}
-export interface LocationService
-  extends ViewService<Location, string> {
+export interface LocationService extends ViewService<Location, string> {
   /*
   getLocationsByTypeInRadius?(type: string, raidus: number): Promise<Location[]>;
   saveLocation?(userId: string, locationId: string): Promise<boolean>;
   removeLocation?(userId: string, locationId: string): Promise<boolean>;
   getLocationsOfUser?(userId: string): Promise<Location[]>;
-
-  rateLocation?(objRate: LocationRate): Promise<boolean>;
   */
-  rateLocation(objRate: Rate): Promise<boolean>;
-}
-
-export interface RateService extends Service<Rate, string, RateFilter> {
-  rateLocation?(objRate: Rate): Promise<boolean>;
+  rate(rate: Rate): Promise<boolean>;
 }
 
 export const locationModel: Attributes = {
@@ -107,15 +92,15 @@ export const rateModel: Attributes = {
     key: true,
   },
   locationId: {
-    required: true,
-    q: true,
+    required: true
   },
   userId: {
-    required: true,
-    q: true,
+    required: true
   },
   rate: {
-    type: 'number',
+    type: 'integer',
+    min: 1,
+    max: 5
   },
   rateTime: {
     type: 'datetime',

@@ -1,36 +1,27 @@
 import { Request, Response } from 'express';
-import { LoadSearchHandler, Log } from 'express-ext';
-import { Search } from 'onecore';
-import {
-  Location,
-  LocationFilter,
-  LocationService,
-  Rate
-} from './location';
-export class LocationController extends LoadSearchHandler<
-  Location,
-  string,
-  LocationFilter
-> {
+import { getStatusCode, handleError, LoadSearchHandler, Log } from 'express-ext';
+import { Search, Validator } from 'onecore';
+import { createValidator } from 'xvalidators';
+import { Location, LocationFilter, LocationService, Rate, rateModel } from './location';
+
+export class LocationController extends LoadSearchHandler<Location, string, LocationFilter> {
+  validator: Validator<Rate>;
   constructor(log: Log, find: Search<Location, LocationFilter>, public service: LocationService) {
     super(log, find, service);
-    this.rateLocation = this.rateLocation.bind(this);
+    this.rate = this.rate.bind(this);
+    this.validator = createValidator<Rate>(rateModel);
   }
-  async rateLocation(req: Request, res: Response): Promise<any> {
-    const { userId, locationId, rate, review, id, rateTime } = req.body;
-    try {
-      const rateLocation: Rate = {
-        userId,
-        locationId,
-        rate,
-        review,
-        id,
-        rateTime,
-      };
-      const rs = await this.service.rateLocation(rateLocation);
-      return res.json(rs);
-    } catch (error) {
-      return res.status(400).json(false);
-    }
+  rate(req: Request, res: Response) {
+    const rate: Rate = req.body;
+    rate.rateTime = new Date();
+    this.validator.validate(rate).then(errors => {
+      if (errors && errors.length > 0) {
+        res.status(getStatusCode(errors)).json(errors).end();
+      } else {
+        this.service.rate(rate).then(rs => {
+          res.json(rs);
+        }).catch(err => handleError(err, res, this.log));
+      }
+    }).catch(err => handleError(err, res, this.log));
   }
 }

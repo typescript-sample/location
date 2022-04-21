@@ -18,7 +18,7 @@
     "logger-core": "^0.3.0",
     "mongodb": "3.7.3",
     "mongodb-extension": "^0.1.9",
-    "onecore": "^0.0.28",
+    "onecore": "0.0.30",
     "shortid": "^2.2.16",
     "xvalidators": "^0.0.4"
   },

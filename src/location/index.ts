@@ -2,17 +2,7 @@ import { Db } from 'mongodb';
 import { buildQuery, PointMapper, SearchBuilder } from 'mongodb-extension';
 import { Log, ViewManager } from 'onecore';
 import shortid from 'shortid';
-import {
-  Location,
-  LocationFilter,
-  LocationInfo,
-  LocationInfoRepository,
-  locationModel,
-  LocationRepository,
-  LocationService,
-  Rate,
-  RateRepository,
-} from './location';
+import { Location, LocationFilter, LocationInfo, LocationInfoRepository, locationModel, LocationRepository, LocationService, Rate, RateRepository } from './location';
 import { LocationController } from './location-controller';
 import { MongoLocationInfoRepository } from './mongo-location-info-repository';
 import { MongoLocationRateRepository } from './mongo-location-rate-repository';
@@ -21,54 +11,53 @@ export { LocationController };
 
 import { MongoLocationRepository } from './mongo-location-repository';
 
-export class LocationManager
-  extends ViewManager<Location, string>
-  implements LocationService {
-  constructor(
-    repository: LocationRepository,
-    private rateRepository: RateRepository,
-    private infoRepository: LocationInfoRepository
-  ) {
+export class LocationManager extends ViewManager<Location, string> implements LocationService {
+  constructor(private repository: LocationRepository, private rateRepository: RateRepository, private infoRepository: LocationInfoRepository) {
     super(repository);
   }
-  async rateLocation(objRate: Rate): Promise<boolean> {
-    if (
-      !this.rateRepository.save ||
-      !this.infoRepository.save
-    ) {
-      return false;
-    }
-    const info = await this.infoRepository.load(objRate.locationId);
-    if (
-      !info ||
-      typeof info[('rate' + objRate.rate.toString()) as keyof LocationInfo ] === 'undefined'
-    ) {
+  load(id: string): Promise<Location | null> {
+    return this.repository.load(id).then(location => {
+      if (!location) {
+        return null;
+      } else {
+        return this.infoRepository.load(id).then(info => {
+          if (info) {
+            delete (info as any)['id'];
+            location.info = info;
+          }
+          return location;
+        });
+      }
+    });
+  }
+  async rate(rate: Rate): Promise<boolean> {
+    const info = await this.infoRepository.load(rate.locationId);
+    if (!info || typeof info[('rate' + rate.rate.toString()) as keyof LocationInfo ] === 'undefined') {
       return false;
     }
 
-    if (objRate.id) {
-      const rate = await this.rateRepository.load(objRate.id);
-      if (!rate) { return false; }
-      (info as any)['rate' + rate.rate.toString()] -= 1;
-      rate.rate = objRate.rate;
-      const rs = await this.rateRepository.update(rate);
-      if (rs !== 1) { return false; }
+    if (rate.id) {
+      const dbRate = await this.rateRepository.load(rate.id);
+      if (!dbRate) {
+        return false;
+      }
+      (info as any)['rate' + dbRate.rate.toString()] -= 1;
+      dbRate.rate = rate.rate;
+      const res = await this.rateRepository.update(dbRate);
+      if (res < 1) {
+        return false;
+      }
     } else {
-      const rs = await this.rateRepository.save({
-        ...objRate,
-        id: shortid.generate(),
-      });
-      if (rs !== 1) { return false; }
+      rate.id = shortid.generate();
+      const res = await this.rateRepository.save(rate);
+      if (res < 1) {
+        return false;
+      }
     }
-    const sumRate =
-      info.rate1 +
-      info.rate2 * 2 +
-      info.rate3 * 3 +
-      info.rate4 * 4 +
-      info.rate5 * 5;
-    info.viewCount = sumRate;
-    (info as any)['rate' + objRate.rate.toString()] += 1;
-    info.rate = sumRate / info.viewCount;
+    (info as any)['rate' + rate.rate.toString()] += 1;
+    const sumRate = info.rate1 + info.rate2 * 2 + info.rate3 * 3 + info.rate4 * 4 + info.rate5 * 5;
+    const count = info.rate1 + info.rate2 + info.rate3 + info.rate4 + info.rate5;
+    info.rate = sumRate / count;
     this.infoRepository.save(info);
     return true;
   }
