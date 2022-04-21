@@ -19,6 +19,7 @@
     "mongodb": "3.7.3",
     "mongodb-extension": "^0.1.9",
     "onecore": "^0.0.28",
+    "shortid": "^2.2.16",
     "xvalidators": "^0.0.4"
   },
   "devDependencies": {
