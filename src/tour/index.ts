@@ -17,5 +17,6 @@ export class TourManager extends ViewManager<Tour, string> implements TourServic
 export function useTourController(log: Log, db: Db): TourController {
   const builder = new SearchBuilder<Tour, TourFilter>(db, 'tour', buildQuery, tourModel);
   const repository = new MongoTourRepository(db);
-  return new TourController(log, builder.search, repository);
+  const service = new TourManager(repository);
+  return new TourController(log, builder.search, service);
 }

@@ -1,5 +1,6 @@
-import { Controller, LoadSearchHandler, Log } from "express-ext";
-import { Search } from "onecore";
+import { Request, Response } from 'express';
+import { Controller, LoadSearchHandler, Log } from 'express-ext';
+import { Search } from 'onecore';
 import {
   Location,
   LocationFilter,
@@ -7,15 +8,14 @@ import {
   Rate,
   RateFilter,
   RateService,
-} from "./location";
-import { Request, Response } from "express";
-export class LocationController extends Controller<
+} from './location';
+export class LocationController extends LoadSearchHandler<
   Location,
   string,
   LocationFilter
 > {
-  constructor(log: Log, public service: LocationService) {
-    super(log, service);
+  constructor(log: Log, find: Search<Location, LocationFilter>, public service: LocationService) {
+    super(log, find, service);
     this.rateLocation = this.rateLocation.bind(this);
   }
   async rateLocation(req: Request, res: Response): Promise<any> {

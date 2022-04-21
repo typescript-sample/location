@@ -17,5 +17,6 @@ export class ArticleManager extends ViewManager<Article, string> implements Arti
 export function useArticleController(log: Log, db: Db): ArticleController {
   const builder = new SearchBuilder<Article, ArticleFilter>(db, 'article', buildQuery, articleModel);
   const repository = new MongoArticleRepository(db);
-  return new ArticleController(log, builder.search, repository);
+  const service = new ArticleManager(repository);
+  return new ArticleController(log, builder.search, service);
 }

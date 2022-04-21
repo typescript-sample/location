@@ -2,11 +2,11 @@ import {
   Attributes,
   DateRange,
   Filter,
+  Repository,
   Service,
   ViewRepository,
   ViewService,
-  Repository,
-} from "onecore";
+} from 'onecore';
 
 export interface LocationFilter extends Filter {
   id?: string;
@@ -31,13 +31,35 @@ export interface Location {
   phone?: string;
   dateOfBirth?: string;
 }
-export interface LocationRepository extends Repository<Location, string> {}
+export interface LocationInfo {
+  id: string;
+  rate: number;
+  rate1: number;
+  rate2: number;
+  rate3: number;
+  rate4: number;
+  rate5: number;
+  viewCount: number;
+}
+export interface Rate {
+  id?: string;
+  locationId: string;
+  userId: string;
+  rate: number;
+  rateTime?: Date;
+  review?: string;
+}
 
-export interface RateRepository extends Repository<Rate, string> {}
+export interface LocationRepository extends ViewRepository<Location, string> {
+}
 
-export interface LocationInfoRepository extends Repository<LocationInfo, string> {}
+export interface RateRepository extends Repository<Rate, string> {
+}
+
+export interface LocationInfoRepository extends Repository<LocationInfo, string> {
+}
 export interface LocationService
-  extends Service<Location, string, LocationFilter> {
+  extends ViewService<Location, string> {
   /*
   getLocationsByTypeInRadius?(type: string, raidus: number): Promise<Location[]>;
   saveLocation?(userId: string, locationId: string): Promise<boolean>;
@@ -62,42 +84,23 @@ export const locationModel: Attributes = {
     q: true,
   },
   type: {
-    match: "equal",
+    match: 'equal',
     required: true,
   },
   description: {
     q: true,
   },
   status: {
-    match: "equal",
+    match: 'equal',
   },
   imageURL: {},
   latitude: {
-    type: "number",
+    type: 'number',
   },
   longitude: {
-    type: "number",
+    type: 'number',
   },
 };
-
-export interface Rate {
-  id?: string;
-  locationId: string;
-  userId: string;
-  rate: number;
-  rateTime?: Date;
-  review?: string;
-}
-export interface LocationInfo {
-  id: string;
-  rate: number;
-  rate1: number;
-  rate2: number;
-  rate3: number;
-  rate4: number;
-  rate5: number;
-  viewCount: number;
-}
 
 export const rateModel: Attributes = {
   id: {
@@ -112,10 +115,10 @@ export const rateModel: Attributes = {
     q: true,
   },
   rate: {
-    type: "number",
+    type: 'number',
   },
   rateTime: {
-    type: "datetime",
+    type: 'datetime',
   },
   review: {
     q: true,
@@ -127,24 +130,24 @@ export const locationInfoModel: Attributes = {
     key: true,
   },
   viewCount: {
-    type: "number",
+    type: 'number',
   },
   rate: {
-    type: "number",
+    type: 'number',
   },
   rate1: {
-    type: "number",
+    type: 'number',
   },
   rate2: {
-    type: "number",
+    type: 'number',
   },
   rate3: {
-    type: "number",
+    type: 'number',
   },
   rate4: {
-    type: "number",
+    type: 'number',
   },
   rate5: {
-    type: "number",
+    type: 'number',
   },
 };

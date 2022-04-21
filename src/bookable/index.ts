@@ -17,5 +17,6 @@ export class BookableManager extends ViewManager<Bookable, string> implements Bo
 export function useBookableController(log: Log, db: Db): BookableController {
   const builder = new SearchBuilder<Bookable, BookableFilter>(db, 'bookable', buildQuery, bookableModel);
   const repository = new MongoBookableRepository(db);
-  return new BookableController(log, builder.search, repository);
+  const service = new BookableManager(repository);
+  return new BookableController(log, builder.search, service);
 }

@@ -18,5 +18,6 @@ export function useEventController(log: Log, db: Db): EventController {
   const mapper = new PointMapper<Event>('geo', 'latitude', 'longitude');
   const builder = new SearchBuilder<Event, EventFilter>(db, 'event', buildQuery, eventModel, mapper.fromPoint);
   const repository = new MongoEventRepository(db, mapper.fromPoint);
-  return new EventController(log, builder.search, repository);
+  const service = new EventManager(repository);
+  return new EventController(log, builder.search, service);
 }
