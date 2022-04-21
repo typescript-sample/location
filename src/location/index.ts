@@ -13,7 +13,7 @@ import {
   Rate,
   RateRepository,
 } from './location';
-import { LocationController, RateController } from './location-controller';
+import { LocationController } from './location-controller';
 import { MongoLocationInfoRepository } from './mongo-location-info-repository';
 import { MongoLocationRateRepository } from './mongo-location-rate-repository';
 export * from './location';

@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
-import { Controller, LoadSearchHandler, Log } from 'express-ext';
+import { LoadSearchHandler, Log } from 'express-ext';
 import { Search } from 'onecore';
 import {
   Location,
   LocationFilter,
   LocationService,
-  Rate,
-  RateFilter,
-  RateService,
+  Rate
 } from './location';
 export class LocationController extends LoadSearchHandler<
   Location,
@@ -34,11 +32,5 @@ export class LocationController extends LoadSearchHandler<
     } catch (error) {
       return res.status(400).json(false);
     }
-  }
-}
-
-export class RateController extends Controller<Rate, string, RateFilter> {
-  constructor(log: Log, service: RateService) {
-    super(log, service);
   }
 }
