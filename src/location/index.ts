@@ -34,7 +34,6 @@ export class LocationManager
   async rateLocation(objRate: Rate): Promise<boolean> {
     if (
       !this.rateRepository.save ||
-      !this.rateRepository.exist ||
       !this.infoRepository.save
     ) {
       return false;
