@@ -1,4 +1,5 @@
 import { HealthController, LogController, Logger, Middleware, MiddlewareController, resources } from 'express-ext';
+import { LocationRateController } from 'location/rate-controller';
 import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import { createValidator } from 'xvalidators';
@@ -6,7 +7,7 @@ import { ArticleController, useArticleController } from './article';
 import { BookableController, useBookableController } from './bookable';
 import { BookingController, useBookingController } from './booking';
 import { EventController, useEventController } from './event';
-import { LocationController, useLocationController } from './location';
+import { LocationController, useLocationController, useLocationRateController } from './location';
 import { TourController, useTourController } from './tour';
 import { TripController, useTripController } from './trip';
 
@@ -23,6 +24,7 @@ export interface ApplicationContext {
   location: LocationController;
   tour: TourController;
   trip: TripController;
+  rate:LocationRateController;
 }
 export function useContext(db: Db, logger: Logger, midLogger: Middleware): ApplicationContext {
   const log = new LogController(logger);
@@ -37,6 +39,6 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware): Appli
   const location = useLocationController(logger.error, db);
   const tour = useTourController(logger.error, db);
   const trip = useTripController(logger.error, db);
-
-  return { health, log, middleware, article, bookable, booking, event, location, tour, trip };
+  const rate = useLocationRateController(logger.error,db);
+  return { health, log, middleware, article, bookable, booking, event, location, tour, trip,rate };
 }
