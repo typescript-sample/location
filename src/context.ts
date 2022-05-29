@@ -24,7 +24,7 @@ export interface ApplicationContext {
   location: LocationController;
   tour: TourController;
   trip: TripController;
-  rate:LocationRateController;
+  rate: LocationRateController;
 }
 export function useContext(db: Db, logger: Logger, midLogger: Middleware): ApplicationContext {
   const log = new LogController(logger);
@@ -39,6 +39,6 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware): Appli
   const location = useLocationController(logger.error, db);
   const tour = useTourController(logger.error, db);
   const trip = useTripController(logger.error, db);
-  const rate = useLocationRateController(logger.error,db);
-  return { health, log, middleware, article, bookable, booking, event, location, tour, trip,rate };
+  const rate = useLocationRateController(logger.error, db);
+  return { health, log, middleware, article, bookable, booking, event, location, tour, trip, rate };
 }

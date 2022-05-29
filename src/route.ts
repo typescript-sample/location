@@ -31,10 +31,10 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/locations/:id', ctx.location.load);
   app.post('/locations/rateLocation', ctx.location.rate);
 
-  app.get('/locationsrate/search',ctx.rate.search);
-  app.post('/locationsrate/search',ctx.rate.search);
-  app.get('/locationsrate/:id',ctx.rate.load);
-  
+  app.get('/location-rates/search', ctx.rate.search);
+  app.post('/location-rates/search', ctx.rate.search);
+  app.get('/location-rates/:id', ctx.rate.load);
+
   app.post('/tours/search', ctx.tour.search);
   app.get('/tours/search', ctx.tour.search);
   app.get('/tours/:id', ctx.tour.load);

@@ -9,12 +9,12 @@ export interface LocationFilter extends Filter {
   longitude?: number;
   radius?: number;
 }
-export interface RateFilter extends Filter{
-  id:string;
-  review?:string;
-  locationId?:string;
-  userId?:string;
-  rateTime:Date;
+export interface RateFilter extends Filter {
+  id: string;
+  review?: string;
+  locationId?: string;
+  userId?: string;
+  rateTime: Date;
 }
 export interface Location {
   id?: string;
@@ -65,8 +65,7 @@ export interface LocationService extends ViewService<Location, string> {
   */
   rate(rate: Rate): Promise<boolean>;
 }
-export interface RateService extends ViewService<Rate,string>{
-  
+export interface RateService extends ViewService<Rate, string> {
 }
 export const locationModel: Attributes = {
   id: {

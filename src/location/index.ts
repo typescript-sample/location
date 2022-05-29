@@ -64,8 +64,8 @@ export class LocationManager extends ViewManager<Location, string> implements Lo
   }
 }
 
-export class RateManagaer extends ViewManager<Rate, string>implements RateService{
-  constructor(private repository:RateRepository){
+export class RateManagaer extends ViewManager<Rate, string>implements RateService {
+  constructor(private repository: RateRepository) {
     super(repository);
   }
 }
@@ -79,9 +79,9 @@ export function useLocationController(log: Log, db: Db): LocationController {
   return new LocationController(log, builder.search, service);
 }
 
-export function useLocationRateController(log:Log,db:Db):LocationRateController{
-  const builder = new SearchBuilder<Rate, RateFilter>(db,'locationRate',buildQuery,rateModel);
+export function useLocationRateController(log: Log, db: Db): LocationRateController {
+  const builder = new SearchBuilder<Rate, RateFilter>(db, 'locationRate', buildQuery, rateModel);
   const repository = new MongoLocationRateRepository(db);
   const service = new RateManagaer(repository);
-  return new LocationRateController(log,builder.search, service);
+  return new LocationRateController(log, builder.search, service);
 }
